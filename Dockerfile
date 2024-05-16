@@ -23,7 +23,11 @@ RUN apt-get update -qq && \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+
+# REMOVE THIS NEXT LINE IN A PRODUCTION ENVIRONMENT TODO
+# Allows for the addition of gems
 RUN bundle config set frozen false
+
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile

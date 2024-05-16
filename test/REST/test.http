@@ -1,0 +1,16 @@
+# REST Testing for Rails server
+
+###
+
+# Get status of server over localhost
+GET http://{{LOCAL_HOST}}:{{APP_PORT}}/status
+
+###
+
+# Get status of server over local network
+GET http://{{LOCAL_IP}}:{{APP_PORT}}/status
+
+###
+
+# Get status of server over Internet
+GET http://{{PUBLIC_IP}}:{{APP_PORT}}/status
