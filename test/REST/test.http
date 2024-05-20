@@ -1,5 +1,7 @@
 # REST Testing for Rails server
 
+
+# SERVER STATUS
 ###
 
 # Get status of server over localhost
@@ -14,3 +16,36 @@ GET http://{{LOCAL_IP}}:{{APP_PORT}}/status
 
 # Get status of server over Internet
 GET http://{{PUBLIC_IP}}:{{APP_PORT}}/status
+
+
+# LOGIN
+
+###
+
+# Submit username and password
+POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "EXAMPLEUSERNAME",
+    "password": "EXAMPLEPASSWORD"
+}
+
+# CREATE
+
+###
+
+# Submit request access form
+POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/create HTTP/1.1
+content-type: application/json
+
+{
+    "newUsername": "TestUser",
+    "newPassword": "assadasd",
+    "confirmPassword": "assadasd",
+    "firstName": "TestFirst",
+    "lastName": "asd",
+    "email": "exampleemail@gmail.com",
+    "phoneNum": "1234567891",
+    "note": "Haa"
+}
