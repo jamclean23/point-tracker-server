@@ -46,6 +46,6 @@ content-type: application/json
     "firstName": "TestFirst",
     "lastName": "asd",
     "email": "exampleemail@gmail.com",
-    "phoneNum": "1234567891",
+    "phoneNum": "1",
     "note": "Haa"
 }

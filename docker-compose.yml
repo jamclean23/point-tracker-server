@@ -4,9 +4,19 @@ services:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
     volumes:
-      - .:/app
+      - .\app:/rails/app
+      - .\config:/rails/config
+      - .\db:/rails/db
+      - .\lib:/rails/lib
+      - .\log:/rails/log
+      - .\public:/rails/public
+      - .\storage:/rails/storage
+      - .\test:/rails/test
+
+    user: root
     ports:
       - "5555:3000"
     environment:
       DATABASE_URL: "postgres://$DB_USERNAME:$DB_PASSWORD@$DB_ENDPOINT:$DB_PORT/$DB_NAME"
       RAILS_MASTER_KEY: "$RAILS_MASTER_KEY"
+      SECRET_KEY_BASE: "$SECRET_KEY_BASE"

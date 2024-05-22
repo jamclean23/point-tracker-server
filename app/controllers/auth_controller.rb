@@ -7,16 +7,10 @@ class AuthController < ActionController::API
 
 
     def login
-
-        puts "LOGIN ATTEMPT"
-        puts params[:username]
-        puts params[:password]
         render json: {}, status: :ok
-
     end
 
     def create
-        puts params
         render json: {}, status: :ok
     end
 
