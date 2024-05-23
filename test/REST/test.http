@@ -40,12 +40,43 @@ POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/create HTTP/1.1
 content-type: application/json
 
 {
-    "newUsername": "TestUser",
+    "newUsername": "TestUser5",
     "newPassword": "assadasd",
     "confirmPassword": "assadasd",
     "firstName": "TestFirst",
     "lastName": "asd",
-    "email": "exampleemail@gmail.com",
-    "phoneNum": "1",
+    "email": "exampleemail5@gmail.com",
+    "phoneNum": "1234567890",
     "note": "Haa"
 }
+
+###
+# Test login
+POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/test_login HTTP/1.1
+content-type: application/json
+
+{
+    "user": {
+        "username": "TestUser5",
+        "password": "assadasd"
+    }
+}
+
+
+###
+# Login, should return jwt
+POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+    "user": {
+        "username": "TestUser5",
+        "password": "assadasd"
+    }
+}
+
+###
+# Test Jwt Auth
+POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/test_jwt_authenticate HTTP/1.1
+content-type: application/json
+Authorization: "Bearer: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDE0NTYyZmItZTM1OC00MjhhLTgwYTktMGZhN2EyZWQ2MjFmIiwiZXhwIjoxNzMyMzkxOTM3fQ.aPqpkuINv_C8KI2bQxRsF8T1DHDVyFTXxddAGM0KNtI"

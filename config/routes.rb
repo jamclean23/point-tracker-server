@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 
   get "status", to: "index#status"
 
+  post "auth/test_login", to: "auth#testLogin"
+
+  post "auth/test_jwt_authenticate", to: "auth#testJwtAuthenticate"
+
+
   post "auth/login", to: "auth#login"
 
   post "auth/create", to: "auth#create"

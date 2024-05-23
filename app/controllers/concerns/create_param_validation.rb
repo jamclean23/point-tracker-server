@@ -10,6 +10,7 @@ module CreateParamValidation
         # Array of errors will be returned to client
         errors = []
         
+
         # NEW USERNAME VALIDATION
         
         # Config
@@ -19,10 +20,15 @@ module CreateParamValidation
             required: true
         }
         
+        # User must not exist
+        if User.exists?(username: params[:newUsername])
+            errors << { field: 'newUsername', message: 'Username already taken' }
+        end
+
         # Required and must be a string
         
         unless params[:newUsername] && params[:newUsername].length > 0 && usernameConfig[:required]
-            errors << { field: 'newUsername', message: 'Username is required'}
+            errors << { field: 'newUsername', message: 'Username is required' }
         end
         
         unless params[:newUsername] && params[:newUsername].is_a?(String)
@@ -212,6 +218,10 @@ module CreateParamValidation
             # Validation
 
             emailErrors = []
+
+            if User.exists?(email: email)
+                emailErrors << { field: 'email', message: 'Account with this email already exists' }
+            end
 
             unless config[:required] && email.length > 1
                 emailErrors << { field: 'email', message: 'May not be blank' }

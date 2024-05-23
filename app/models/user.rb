@@ -10,6 +10,8 @@ class User < ApplicationRecord
     validates :email, presence: true, length: { maximum: 345 }, uniqueness: true
     validates :phone, length: { in: 10..20 }, allow_blank: true
     validates :note, length: { maximum: 2000 }, allow_blank: true
+    validates :admin, inclusion: { in: [true, false] }
+    validates :approved, inclusion: { in: [true, false] }
   
     private
   
