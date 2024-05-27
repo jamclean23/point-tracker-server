@@ -7,10 +7,11 @@ class AuthController < ActionController::API
 
     before_action :validate_login_params, only: [:login]
     before_action :validate_create_params, only: [:create]
-    before_action :jwt_authenticate_request, only: [:testJwtAuthenticate]
+    before_action :jwt_authenticate_request, only: [:jwtAuthenticate]
 
-    def testJwtAuthenticate
-        render json: { user: @current_user }
+    def jwtAuthenticate
+        # Returns the user without the password hash
+        render json: { user: @current_user.as_json(except: :password_digest) }
     end
 
     def testLogin
@@ -19,8 +20,10 @@ class AuthController < ActionController::API
 
         if authenticated
             render json: { message: 'Credentials Valid' }
+            return
         else
             render json: { message: 'Invalid Credentials' }
+            return
         end
     end
 
@@ -28,11 +31,23 @@ class AuthController < ActionController::API
         user = User.find_by(username: params[:user][:username])
         authenticated = user&.authenticate(params[:user][:password])
 
+        if !user
+            render json: {errors: [{ field: 'serverMsg', message: 'User does not exist. Request access to make an account.' }]}
+            return
+        end
+
+        if !user[:approved]
+            render json: {errors: [{ field: 'serverMsg', message: 'User has not been approved. Contact your administrator to continue.' }]}
+            return
+        end
+
         if authenticated
             token = JWT.encode({ user_id: user.id, exp: 6.months.from_now.to_i }, ENV['SECRET_KEY_BASE'])
             render json: { token: token }
+            return
         else
-            render json: { message: 'Invalid Credentials' }
+            render json: { errors: [{ field: 'serverMsg', message: 'Invalid Password' }] }
+            return
         end
     end
 

@@ -9,8 +9,7 @@ Rails.application.routes.draw do
 
   post "auth/test_login", to: "auth#testLogin"
 
-  post "auth/test_jwt_authenticate", to: "auth#testJwtAuthenticate"
-
+  get "auth/jwt_authenticate", to: "auth#jwtAuthenticate"
 
   post "auth/login", to: "auth#login"
 

@@ -77,6 +77,6 @@ content-type: application/json
 
 ###
 # Test Jwt Auth
-POST http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/test_jwt_authenticate HTTP/1.1
+GET http://{{PUBLIC_IP}}:{{APP_PORT}}/auth/jwt_authenticate HTTP/1.1
 content-type: application/json
 Authorization: "Bearer: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDE0NTYyZmItZTM1OC00MjhhLTgwYTktMGZhN2EyZWQ2MjFmIiwiZXhwIjoxNzMyMzkxOTM3fQ.aPqpkuINv_C8KI2bQxRsF8T1DHDVyFTXxddAGM0KNtI"

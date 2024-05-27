@@ -8,12 +8,29 @@ module JwtAuth
             begin
                 decoded_token = JWT.decode(token, ENV['SECRET_KEY_BASE'])
                 user_id = decoded_token[0]['user_id']
-                @current_user = User.find_by(id: user_id)
+                user = User.find_by(id: user_id)
+
+                # If the user has been approved, set the user. Otherwise, render an error
+                if !user
+                    render json: { errors: [{ field: 'serverMsg', message: 'User not found' }]}
+                    return
+                elsif !user[:approved]
+                    render json: { errors: [{ field: 'serverMsg', message: 'User has not been approved. Contact your administrator to continue' }] }
+                    return
+                elsif user[:approved]
+                    @current_user = user
+                else
+                    render json: { errors: [{ field: 'serverMsg', message: 'Invalid token'}] }
+                    return
+                end
+
             rescue JWT::DecodeError
-                render json: { error: 'Invalid token' }, status: :unauthorized
+                render json: { errors: [{ field: 'serverMsg', message: 'Invalid token' }] }, status: :unauthorized
+                return
             end
         else
-            render json: { error: 'Token not provided' }, status: :unauthorized
+            render json: { errors: [{ field: 'serverMsg', message: 'Token not provided' }] }, status: :unauthorized
+            return
         end
     end
 end
