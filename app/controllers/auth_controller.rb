@@ -7,7 +7,7 @@ class AuthController < ActionController::API
 
     before_action :validate_login_params, only: [:login]
     before_action :validate_create_params, only: [:create]
-    before_action :jwt_authenticate_request, only: [:jwtAuthenticate]
+    before_action :jwt_authenticate_request, only: [:jwtAuthenticate, :delete]
 
     def jwtAuthenticate
         # Returns the user without the password hash
@@ -71,6 +71,14 @@ class AuthController < ActionController::API
                             message: 'User not added',
                             errors: user.errors.full_messages
                         }, status: :bad_request
+        end
+    end
+
+    def delete
+        if @current_user.destroy
+            render json: { result: 'success' }, status: :ok
+        else
+            render json: { result: 'failed' }, status: :unprocessable_entity
         end
     end
 

@@ -273,7 +273,8 @@ module CreateParamValidation
                 phoneErrors << { field: 'phoneNum', message: 'Only digits allowed' }
             end
 
-            unless phoneNum.length >= config[:min]
+            
+            unless phoneNum.length >= config[:min] || phoneNum.length == 0
                 phoneErrors << { field: 'phoneNum', message: 'Must be at least ' + config[:min].to_s + ' digits' }
             end
 

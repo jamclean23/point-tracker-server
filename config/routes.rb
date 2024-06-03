@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   post "auth/create", to: "auth#create"
 
+  delete "auth/delete", to: "auth#delete"
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
