@@ -8,7 +8,7 @@ class IndexController < ActionController::API
     }
     include JwtAuth
 
-    before_action :jwt_authenticate_request, only: [:getSites]
+    before_action :jwt_authenticate_request, only: [:getSites, :getPoints]
 
     def status
         render json: { "status": "OK" }, status: :ok
@@ -48,5 +48,40 @@ class IndexController < ActionController::API
             conn.close if conn
         end
         
+    end
+
+    def getPoints
+        puts 'PARAMS'
+        puts params
+        begin
+            conn = PG.connect($points_db_config)
+
+            query = 
+                <<-SQL
+                SELECT *
+                FROM control_points
+                WHERE op_uid = $1
+                SQL
+
+            result = conn.exec(query, [params[:siteId]])
+
+            unless result.is_a?(PG::Result)
+                puts 'Result wrong type'
+                render json: {error: 'Error contacting database'}, status: :internal_server_error
+                return
+            end
+
+            points = result.map do |row|
+                row
+            end
+            render json: { "points": points}
+            return
+        rescue => e
+            puts e
+            render json: {error: e}, status: :internal_server_error
+            return
+        ensure
+            conn.close if conn
+        end
     end
 end

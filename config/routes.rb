@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   get "index/get_sites", to: "index#getSites"
 
+  post "index/get_points", to: "index#getPoints"
+
   post "auth/test_login", to: "auth#testLogin"
 
   get "auth/jwt_authenticate", to: "auth#jwtAuthenticate"
