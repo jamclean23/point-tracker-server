@@ -10,6 +10,11 @@ class IndexController < ActionController::API
 
     before_action :jwt_authenticate_request, only: [:getSites, :getPoints]
 
+    def testEmail
+        puts params[:user]
+        TestMailer.test_email(params[:user][:email]).deliver_now
+    end
+
     def status
         render json: { "status": "OK" }, status: :ok
     end

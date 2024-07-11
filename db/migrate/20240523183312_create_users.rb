@@ -16,5 +16,23 @@ class CreateUsers < ActiveRecord::Migration[7.1]
 
     add_index :users, :username, unique: true
     add_index :users, :email, unique: true
+
+    execute <<-SQL
+      CREATE OR REPLACE FUNCTION notify_approval_update() RETURNS trigger AS $$
+      BEGIN
+        PERFORM pg_notify('approval_update', NEW.id::text);
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+    SQL
+
+    execute <<-SQL
+      CREATE TRIGGER approval_update_trigger
+      AFTER UPDATE OF approved ON users
+      FOR EACH ROW
+      WHEN (OLD.approved IS DISTINCT FROM NEW.approved)
+      EXECUTE FUNCTION notify_approval_update();
+    SQL
+    
   end
 end
