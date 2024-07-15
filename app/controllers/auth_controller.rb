@@ -60,7 +60,8 @@ class AuthController < ActionController::API
             email: params[:email],
             note: params[:note],
             admin: false,
-            approved: false
+            approved: false,
+            email_verified: false
         })
 
 

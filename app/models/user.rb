@@ -12,6 +12,8 @@ class User < ApplicationRecord
     validates :note, length: { maximum: 2000 }, allow_blank: true
     validates :admin, inclusion: { in: [true, false] }
     validates :approved, inclusion: { in: [true, false] }
+    validates :email_verified, inclusion: { in: [true, false] }
+
   
     private
   

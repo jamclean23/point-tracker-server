@@ -1,4 +1,4 @@
-class CreateUsers < ActiveRecord::Migration[7.1]
+class InitUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :users, id: :uuid do |t|
       t.string :username, limit: 20, null: false
@@ -10,7 +10,7 @@ class CreateUsers < ActiveRecord::Migration[7.1]
       t.text :note, limit: 2000
       t.boolean :admin, default: false, null: false
       t.boolean :approved, default: false, null: false
-
+      t.boolean :email_verified, default: false, null: false
       t.timestamps
     end
 
