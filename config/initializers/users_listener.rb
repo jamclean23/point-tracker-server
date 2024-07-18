@@ -3,11 +3,14 @@
 require_relative '../../app/listeners/users_listener'
 
 Thread.new do
-  begin
-    users_listener = UsersListener.new
-    users_listener.listen
-  rescue => e
-    Rails.logger.error "Error starting UsersListener: #{e.message}"
-    raise e  # Ensure the error is raised to stop the thread in case of an error
+  loop do
+    begin
+      users_listener = UsersListener.new
+      users_listener.listen
+    rescue => e
+      Rails.logger.error "Error in UsersListener: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      sleep 10  # Wait before restarting
+    end
   end
 end

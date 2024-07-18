@@ -41,6 +41,12 @@ class AuthController < ActionController::API
             return
         end
 
+        if !user[:email_verified] && authenticated
+            emailAuthToken = JWT.encode({ email: user[:email], exp: 30.minutes.from_now.to_i}, ENV['SECRET_KEY_BASE'])
+            render json: {errors: [{ field: 'serverMsg', code: 'not_verified', email: user[:email], emailAuthToken: emailAuthToken }]}
+            return
+        end
+
         if authenticated
             token = JWT.encode({ user_id: user.id, exp: 6.months.from_now.to_i }, ENV['SECRET_KEY_BASE'])
             render json: { token: token }
