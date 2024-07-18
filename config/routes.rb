@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
   get "auth/send_verification_email", to: "auth#sendVerificationEmail"
 
+  get "auth/query_verified", to: "auth#queryVerified"
+
   get "auth/verify_email/*jwt", to: "auth#verifyEmail", constraints: { jwt: /.*/ }
 
   # Defines the root path route ("/")

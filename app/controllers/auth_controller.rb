@@ -122,4 +122,23 @@ class AuthController < ActionController::API
         end
     end
 
+    def queryVerified
+        token = request.headers['Authorization']&.split&.last
+        begin
+            decodedToken = JWT.decode(token, ENV['SECRET_KEY_BASE'])
+            email = decodedToken[0]['email']
+
+            user = User.find_by(email: email)
+
+            if user && user[:email_verified]
+                render json: { verified: true }
+            else
+                render json: { verified: false }
+            end
+
+        rescue JWT::DecodeError, JWT::VerificationError, JWT::ExpiredSignature => e
+            render json: { status: 'expired' }
+        end
+    end
+
 end
