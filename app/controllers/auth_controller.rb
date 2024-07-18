@@ -89,4 +89,37 @@ class AuthController < ActionController::API
         end
     end
 
+    def sendVerificationEmail
+        token = request.headers['Authorization']&.split&.last
+        begin
+            decodedToken = JWT.decode(token, ENV['SECRET_KEY_BASE'])
+            email = decodedToken[0]['email'];
+            token = JWT.encode({ email: email, exp: 30.minutes.from_now.to_i}, ENV['SECRET_KEY_BASE'])
+            VerificationMailer.verification_email(email, token).deliver_now
+            render json: { result: 'sent' }
+        rescue JWT::DecodeError, JWT::VerificationError, JWT::ExpiredSignature => e
+            render json: { result: 'expired' }
+        end
+    end
+
+    def verifyEmail
+        token = params[:jwt]
+
+        begin
+            decodedToken = JWT.decode(token, ENV['SECRET_KEY_BASE'])
+            email = decodedToken[0]['email']
+            user = User.find_by(email: email);
+            if user
+                puts user
+                user.update(email_verified: true)
+                render plain: 'Email Verified'
+            else
+                render plain: 'Email not verified, please try again'
+            end
+
+        rescue JWT::DecodeError, JWT::VerificationError, JWT::ExpiredSignature => e
+            render plain: 'Expired or Invalid link'
+        end
+    end
+
 end

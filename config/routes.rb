@@ -23,6 +23,10 @@ Rails.application.routes.draw do
 
   delete "auth/delete", to: "auth#delete"
 
+  get "auth/send_verification_email", to: "auth#sendVerificationEmail"
+
+  get "auth/verify_email/*jwt", to: "auth#verifyEmail", constraints: { jwt: /.*/ }
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
