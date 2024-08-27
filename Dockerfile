@@ -4,6 +4,7 @@
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=3.3.1
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+USER root
 
 # Rails app lives here
 WORKDIR /rails
@@ -29,7 +30,7 @@ COPY Gemfile Gemfile.lock ./
 # Allows for the addition of gems
 RUN bundle config set frozen false
 
-RUN bundle install && \
+RUN bundle install && bundle update bootsnap && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
