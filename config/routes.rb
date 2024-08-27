@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   post "auth/test_login", to: "auth#testLogin"
 
+  post "auth/password_reset", to: "auth#passwordReset"
+
   get "auth/jwt_authenticate", to: "auth#jwtAuthenticate"
 
   post "auth/login", to: "auth#login"

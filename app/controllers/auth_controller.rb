@@ -4,14 +4,34 @@ class AuthController < ActionController::API
     include LoginParamValidation
     include CreateParamValidation
     include JwtAuth
+    include ResetPasswordValidation
 
     before_action :validate_login_params, only: [:login]
     before_action :validate_create_params, only: [:create]
     before_action :jwt_authenticate_request, only: [:jwtAuthenticate, :delete]
+    before_action :validate_email, only: [:passwordReset]
 
     def jwtAuthenticate
         # Returns the user without the password hash
         render json: { user: @current_user.as_json(except: :password_digest) }
+    end
+
+    def passwordReset
+
+        email = params[:email]
+
+        user = User.find_by(email: email)
+
+        token = JWT.encode({ email: email, exp: 30.minutes.from_now.to_i}, ENV['SECRET_KEY_BASE'])
+
+        if user
+            ResetPasswordMailer.reset_password(email, token).deliver_now
+            render json: {result: 'success'}
+            return
+        else
+            render json: {error: 'User with email does not exist'}
+        end
+
     end
 
     def testLogin
