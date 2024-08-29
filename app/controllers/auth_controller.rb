@@ -1,15 +1,17 @@
 require 'jwt'
 
-class AuthController < ActionController::API
+class AuthController < ActionController::Base
     include LoginParamValidation
     include CreateParamValidation
     include JwtAuth
     include ResetPasswordValidation
+    include UpdatePasswordValidation
 
     before_action :validate_login_params, only: [:login]
     before_action :validate_create_params, only: [:create]
     before_action :jwt_authenticate_request, only: [:jwtAuthenticate, :delete]
     before_action :validate_email, only: [:passwordReset]
+    before_action :validate_password, only: [:passwordChange]
 
     def jwtAuthenticate
         # Returns the user without the password hash
@@ -17,11 +19,8 @@ class AuthController < ActionController::API
     end
 
     def passwordReset
-
         email = params[:email]
-
         user = User.find_by(email: email)
-
         token = JWT.encode({ email: email, exp: 30.minutes.from_now.to_i}, ENV['SECRET_KEY_BASE'])
 
         if user
@@ -32,6 +31,36 @@ class AuthController < ActionController::API
             render json: {error: 'User with email does not exist'}
         end
 
+    end
+
+    def resetPasswordPage
+        @jwt = params[:jwt]
+        render 'reset_password/index'
+    end
+
+    def passwordChange
+        token = request.headers['Authorization']&.split&.last
+        begin
+            decodedToken = JWT.decode(token, ENV['SECRET_KEY_BASE'])
+
+            email = decodedToken[0]['email']
+            user = User.find_by(email: email)
+
+            if user
+                user.password = params[:password]
+                if user.save
+                    render json: { result: 'success', message: 'Password updated successfully.'}
+                else
+                    render json: { result: 'failed', message: 'An error occurred. Please try again or contact an administrator.'}
+                end
+            else
+                render json: { result: 'failed', message: 'User not found.'}
+            end
+        rescue JWT::DecodeError, JWT::VerificationError, JWT::ExpiredSignature => e
+            render json: { result: 'expired', message: 'Invalid or expired token.' }
+        rescue StandardError => e
+            render json: { result: 'failed', message: 'An error occurred. Please try again or contact an administrator.'}
+        end
     end
 
     def testLogin
