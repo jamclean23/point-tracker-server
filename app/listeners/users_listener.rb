@@ -2,6 +2,10 @@ require 'pg'
 
 class UsersListener
     def initialize
+        connect
+    end
+
+    def connect
         @conn = ActiveRecord::Base.connection.raw_connection
     end
 
@@ -10,12 +14,18 @@ class UsersListener
         @conn.exec("LISTEN approval_update")
 
         loop do
-            @conn.wait_for_notify do |channel, pid, payload|
-                handle_notification(payload)
+            begin
+                @conn.wait_for_notify do |channel, pid, payload|
+                    handle_notification(payload)
+                end
+            rescue PG::Error => e
+                Rails.logger.error "Connection lost: #{e.message}"
+                sleep 5  # Small delay before reconnecting
+                Rails.logger.info 'Reconnecting to PostgreSQL...'
+                connect
+                retry
             end
         end
-    ensure
-        @conn.close
     end
 
     private
@@ -23,14 +33,14 @@ class UsersListener
     def handle_notification(id)
         puts "Received approval update notification for user with id: #{id}"
         user = User.find_by(id: id)
-        if (!user.nil?)
-            if (user.approved == true)
-                puts 'User ' + id.to_s + ' approved'
-                ApprovalMailer.approved_email(user[:email]).deliver_later
-            elsif (user.approved == false)
-                puts 'User ' + id.to_s + ' approval revoked'
-                ApprovalMailer.revoked_email(user[:email]).deliver_later
-            end 
+        if user
+            if user.approved
+                puts "User #{id} approved"
+                ApprovalMailer.approved_email(user.email).deliver_later
+            else
+                puts "User #{id} approval revoked"
+                ApprovalMailer.revoked_email(user.email).deliver_later
+            end
         end
     end
 end
