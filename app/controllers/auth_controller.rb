@@ -77,7 +77,7 @@ class AuthController < ActionController::Base
     end
 
     def login
-        user = User.find_by(username: params[:user][:username])
+        user = User.find_by(username: params[:user][:username].strip.downcase)
         authenticated = user&.authenticate(params[:user][:password])
 
         if !user
@@ -108,7 +108,7 @@ class AuthController < ActionController::Base
 
     def create
         user = User.new({
-            username: params[:newUsername],
+            username: params[:newUsername].strip.downcase,
             password: params[:newPassword],
             first_name: params[:firstName],
             last_name: params[:lastName],
