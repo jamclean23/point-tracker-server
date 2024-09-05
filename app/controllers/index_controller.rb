@@ -9,6 +9,7 @@ class IndexController < ActionController::API
     include JwtAuth
 
     before_action :jwt_authenticate_request, only: [:getSites, :getPoints]
+    skip_before_action :verify_authenticity_token
 
     def testEmail
         puts params[:user]

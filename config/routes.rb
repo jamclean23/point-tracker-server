@@ -28,6 +28,8 @@ Rails.application.routes.draw do
   get "auth/query_verified", to: "auth#queryVerified"
   get "auth/verify_email/*jwt", to: "auth#verifyEmail", constraints: { jwt: /.*/ }
   get "auth/reset_password_page/*jwt", to: "auth#resetPasswordPage", constraints: { jwt: /.*/ }
+  get "auth/admin_dashboard", to: "auth#adminDashboardPage"
+  get "auth/web_logout", to: "auth#webLogout"
 
   # Post
 
@@ -36,6 +38,7 @@ Rails.application.routes.draw do
   post "auth/login", to: "auth#login"
   post "auth/create", to: "auth#create"
   post "auth/password_change", to: "auth#passwordChange"
+  post "auth/web_login", to: "auth#webLogin"
 
   # Delete
   delete "auth/delete", to: "auth#delete"
