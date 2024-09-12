@@ -8,11 +8,11 @@ USER root
 # Rails app lives here
 WORKDIR /rails
 
+RUN mkdir -p /rails/.bundle
+
 # Set production environment
-ENV RAILS_ENV="development" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+ENV BUNDLE_WITHOUT="development" \
+    BUNDLE_PATH="/usr/local/bundle"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -21,15 +21,10 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
 
-# Install application gems
+# Install application gems, cleanup unnecessary gem files
 COPY Gemfile Gemfile.lock ./
 
-# REMOVE THIS NEXT LINE IN A PRODUCTION ENVIRONMENT TODO
-# Allows for the addition of gems
-RUN bundle config set frozen false
-
-RUN bundle install && bundle update bootsnap && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+RUN bundle install --verbose && bundle update bootsnap && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
@@ -49,13 +44,17 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libvips postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Copy built artifacts: gems, application
+# Copy built artifacts: application
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+    chown -R rails:rails /rails
 USER rails:rails
+# RUN chmod -R u+rwx /rails
+
+
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && ./bin/rails db:prepare && bundle exec rails s -b '0.0.0.0' -p 3000"]
 
 EXPOSE 3000
