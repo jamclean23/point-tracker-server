@@ -52,7 +52,7 @@ COPY --from=build /rails /rails
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails /rails
 USER rails:rails
-# RUN chmod -R u+rwx /rails
+RUN chmod -R u+rwx /rails
 
 
 CMD ["bash", "-c", "rm -f tmp/pids/server.pid && ./bin/rails db:prepare && bundle exec rails s -b '0.0.0.0' -p 3000"]
