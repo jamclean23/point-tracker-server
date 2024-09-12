@@ -1,4 +1,4 @@
--- Creates a test database for point tracker
+-- Creates a database for point tracker
 
 -- Create a listener for approved status changes
 CREATE OR REPLACE FUNCTION notify_approval_update() RETURNS trigger AS $$
@@ -16,7 +16,6 @@ EXECUTE FUNCTION notify_approval_update();
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 
 -- Clients
 CREATE TABLE clients (
