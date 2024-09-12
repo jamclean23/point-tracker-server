@@ -1,5 +1,3 @@
-# README
-
 # Point Tracker Server
 
 ## Setup Instructions
@@ -11,8 +9,11 @@ Here is a link to a Stack Overflow topic concerning this issue: [Git replacing L
 ### Instructions
 
 1. Clone the repository.
-1. Create a postgres database.
-1. Set the database tcp_keepalives_idle to 200.
+1. Create a postgres database for point information.
+1. Execute init-point-db.sql for an empty database, or init-point-db-test-data.sql to include example data.
+1. If intending to use a separate database for users, create a postgres db for this purpose. 
+1. Execute init-users-db.sql on the users database.
+1. Set the database tcp_keepalives_idle for the users database to 200.
 1. Create a .env file at the root of the project. Example:
 ```
 
